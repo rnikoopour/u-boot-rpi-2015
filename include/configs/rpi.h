@@ -190,4 +190,8 @@
 
 #define CONFIG_BOOTDELAY 2
 
+#define CONFIG_API
+#define CONFIG_CMD_ELF
+#define CONFIG_SYS_MMC_MAX_DEVICE 1
+
 #endif
