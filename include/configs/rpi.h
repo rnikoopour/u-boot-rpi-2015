@@ -184,7 +184,8 @@
 
 #include <config_distro_bootcmd.h>
 
-#define BOOTENV "mmcdev=0\0" \
+#define BOOTENV \
+	"mmcdev=0\0" \
 	"loadbootscript=fatload mmc ${mmcdev} ${loadaddr} boot.scr\0" \
 	"bootscript=echo Running bootscript from mmc${mmcdev} ...; " \
 		"source ${loadaddr}\0" \
@@ -194,10 +195,14 @@
 		"env import -t $loadaddr $filesize\0" 
 
 #define CONFIG_BOOTCOMMAND \
-	"run loadbootenv;" \
-	"run importbootenv;" \
-	"run loadbootscript;" \
-	"run bootscript;"
+	"if mmc rescan ${mmcdev}; then " \
+		"if run loadbootenv; then " \
+			"run importbootenv; " \
+		"fi; " \
+		"if run loadbootscript; then " \
+			"run bootscript; " \
+		"fi; " \
+	"fi"
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	ENV_DEVICE_SETTINGS \
