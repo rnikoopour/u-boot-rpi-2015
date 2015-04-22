@@ -195,7 +195,7 @@
 		"env import -t $loadaddr $filesize\0" 
 
 #define CONFIG_BOOTCOMMAND \
-	"if mmc rescan ${mmcdev}; then " \
+	"if mmc rescan; then " \
 		"if run loadbootenv; then " \
 			"run importbootenv; " \
 		"fi; " \
