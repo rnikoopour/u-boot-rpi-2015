@@ -107,8 +107,8 @@
 #define CONFIG_ENV_SIZE			SZ_16K
 #define CONFIG_ENV_IS_IN_FAT
 #define FAT_ENV_INTERFACE		"mmc"
-#define FAT_ENV_DEVICE_AND_PART		"0:1"
-#define FAT_ENV_FILE			"uboot.env"
+#define FAT_ENV_DEVICE_AND_PART		"0"
+#define FAT_ENV_FILE			"uenv.txt"
 #define CONFIG_FAT_WRITE
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
 #define CONFIG_SYS_LOAD_ADDR		0x1000000
@@ -117,7 +117,7 @@
 
 /* Shell */
 #define CONFIG_SYS_MAXARGS		8
-#define CONFIG_SYS_PROMPT		"U-Boot> "
+#define CONFIG_SYS_PROMPT		"U-Boot-2015> "
 #define CONFIG_COMMAND_HISTORY
 
 /* Commands */
@@ -174,14 +174,34 @@
 	"pxefile_addr_r=0x00100000\0" \
 	"kernel_addr_r=0x01000000\0" \
 	"fdt_addr_r=0x02000000\0" \
-	"ramdisk_addr_r=0x02100000\0" \
+	"ramdisk_addr_r=0x02100000\0" 
 
 #define BOOT_TARGET_DEVICES(func) \
 	func(MMC, mmc, 0) \
 	func(USB, usb, 0) \
 	func(PXE, pxe, na) \
 	func(DHCP, dhcp, na)
+
 #include <config_distro_bootcmd.h>
+
+#define BOOTENV "mmcdev=0\0" \
+	"loadbootscript=fatload mmc ${mmcdev} ${loadaddr} boot.scr\0" \
+	"bootscript=echo Running bootscript from mmc${mmcdev} ...; " \
+		"source ${loadaddr}\0" \
+	"bootenv=uEnv.txt\0" \
+	"loadbootenv=fatload mmc ${mmcdev} ${loadaddr} ${bootenv}\0" \
+	"importbootenv=echo Importing environment from mmc ...; " \
+		"env import -t $loadaddr $filesize\0" 
+
+#define CONFIG_BOOTCOMMAND \
+	"if mmc rescan ${mmcdev}; then " \
+		"if run loadbootenv; then " \
+			"run importbootenv; " \
+		"fi; " \
+		"if run loadbootscript; then " \
+			"run bootscript; " \
+		"fi; " \
+	"fi"
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	ENV_DEVICE_SETTINGS \
