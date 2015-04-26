@@ -209,7 +209,13 @@
 	ENV_MEM_LAYOUT_SETTINGS \
 	BOOTENV
 
-#define CONFIG_BOOTDELAY 2
+#define CONFIG_BOOTDELAY 5
+
+#define CONFIG_AUTOBOOT_KEYED
+#define CONFIG_AUTOBOOT_PROMPT \
+	"autoboot in %d seconds\ntype 'stop' to get to UBoot\n",bootdelay
+#define CONFIG_AUTOBOOT_STOP_STR \
+	"stop"
 
 #define CONFIG_API
 #define CONFIG_CMD_ELF
